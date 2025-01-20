@@ -1,8 +1,13 @@
 import logging
 import time
+import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 from meta_ai_api import MetaAI
+from dotenv import load_dotenv
+
+# Load environment variables from the .env file
+load_dotenv()
 
 # Set up logging to track issues
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -96,9 +101,12 @@ async def error_handler(update: Update, context: CallbackContext):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 def main():
-    # Replace with your actual Telegram bot API key
-    bot_token = "7785010346:AAEj-oMHqSONpvvtQtd1r2BJU1RKxVoCW-8"  # Your API Key here
-    
+    # Retrieve the Telegram API token from environment variables
+    bot_token = os.getenv("TELEGRAM_API_TOKEN")
+    if not bot_token:
+        logger.error("No bot token found. Set the TELEGRAM_API_TOKEN environment variable.")
+        return
+
     # Initialize the Application with your bot's token
     application = Application.builder().token(bot_token).build()
 
